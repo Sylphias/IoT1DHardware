@@ -11,6 +11,6 @@ public class tester {
 //                "    userId: 1\n" +
 //                "  }","POST");
 
-        System.out.println(HttpRequester.requester("http://jsonplaceholder.typicode.com/posts/","","GET"));
+        System.out.println(HttpRequester.requester("http://jsonplaceholder.typicode.com/posts/","","GET").get("id"));
     }
 }

@@ -1,16 +1,17 @@
 package HttpRequests;
 
-import jdk.nashorn.internal.parser.JSONParser;
-
-
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Ilya on 7/11/16.
@@ -18,9 +19,10 @@ import java.util.HashMap;
  * This class handles Http requests for services consumed by the pi machine
  */
 public class HttpRequester {
-    public static String requester(String targetURL, String urlParameters, String requestType){
+    public static Map<String, String> requester(String targetURL, String urlParameters, String requestType){
         HttpURLConnection connection = null;
         try{
+
             URL url = new URL(targetURL);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("Content-Type", "application/x-ww-form-urlenconded");
@@ -44,9 +46,10 @@ public class HttpRequester {
                 response.append(line);
             }
             rd.close();
-//            JSONParser parser = new JSONParser(response.toString());
-//            Object obj  = parser.parse();
-            return response.toString();
+            Gson gson = new Gson();
+            Type type = new TypeToken<Map<String, String>>(){}.getType();
+            Map <String, String> data = gson.fromJson(response.toString(),type);
+            return data;
 
         }catch(Exception e){
             System.out.println(e);
