@@ -19,7 +19,7 @@ import java.util.Map;
  * This class handles Http requests for services consumed by the pi machine
  */
 public class HttpRequester {
-    public static Map<String, String> requester(String targetURL, String urlParameters, String requestType){
+    public static Map<String, String> requester(String targetURL, String urlParameters,byte[] data, String requestType){
         HttpURLConnection connection = null;
         try{
 
@@ -48,20 +48,13 @@ public class HttpRequester {
             rd.close();
             Gson gson = new Gson();
             Type type = new TypeToken<Map<String, String>>(){}.getType();
-            Map <String, String> data = gson.fromJson(response.toString(),type);
-            return data;
+            Map <String, String> dataz = gson.fromJson(response.toString(),type);
+            return dataz;
 
         }catch(Exception e){
             System.out.println(e);
         }
         return null;
     }
-
-    public static HashMap to_hashMap(String response){
-        //// TODO: 7/11/16  Write function to convert response to hashmap
-
-        return new HashMap();
-    }
-
 
 }
