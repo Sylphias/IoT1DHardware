@@ -68,5 +68,39 @@
         <jarDirectory url="file://$MODULE_DIR$/../Java Libraries" recursive="false" />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../serial-communication-java/lib/jSSC-2.7.0-Release" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/../serial-communication-java/lib/jSSC-2.7.0-Release" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="file://$MODULE_DIR$/lib/gson-master/gson/docs/javadocs" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/gson-master/codegen/src/main/java" />
+          <root url="file://$MODULE_DIR$/lib/gson-master/codegen/src/test/java" />
+          <root url="file://$MODULE_DIR$/lib/gson-master/examples/android-proguard-example/src" />
+          <root url="file://$MODULE_DIR$/lib/gson-master/extras/src/main/java" />
+          <root url="file://$MODULE_DIR$/lib/gson-master/extras/src/test/java" />
+          <root url="file://$MODULE_DIR$/lib/gson-master/gson/src/main/java" />
+          <root url="file://$MODULE_DIR$/lib/gson-master/gson/src/test/java" />
+          <root url="file://$MODULE_DIR$/lib/gson-master/metrics/src/main/java" />
+          <root url="file://$MODULE_DIR$/lib/gson-master/proto/src/main/java" />
+          <root url="file://$MODULE_DIR$/lib/gson-master/proto/src/test/java" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" exported="" name="gson-2.8.0-javadoc" level="project" />
   </component>
 </module>
