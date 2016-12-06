@@ -1,5 +1,7 @@
 package IoTData;
 
+import java.util.HashMap;
+
 /**
  * Created by Ilya on 8/11/16.
  */
@@ -17,6 +19,14 @@ public class EmotionData {
         this.sadness = sadness;
         this.id = id;
         this.person_id = person_id;
+    }
+
+    public EmotionData(double anger, double happiness, double sadness, int person_id) {
+        this.anger = anger;
+        this.happiness = happiness;
+        this.sadness = sadness;
+        this.person_id = person_id;
+        this.feeling = this.getHighestEmotion();
     }
 
     public long getTimestamp() {
@@ -73,6 +83,22 @@ public class EmotionData {
 
     public void setPerson_id(int person_id) {
         this.person_id = person_id;
+    }
+
+    public String getHighestEmotion(){
+        HashMap<String,Double> emotionMap = new HashMap<String,Double>();
+        emotionMap.put("Happiness",this.getHappiness());
+        emotionMap.put("Sadness",this.getSadness());
+        emotionMap.put("Anger",this.getAnger());
+        HashMap.Entry<String,Double> maxEntry = null;
+        for (HashMap.Entry<String, Double> entry : emotionMap.entrySet())
+        {
+            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0)
+            {
+                maxEntry = entry;
+            }
+        }
+        return maxEntry.getKey();
     }
 }
 
