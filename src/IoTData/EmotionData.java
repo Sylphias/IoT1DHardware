@@ -100,5 +100,16 @@ public class EmotionData {
         }
         return maxEntry.getKey();
     }
+
+
+    public HashMap<String,String> toHashMap(){
+        HashMap<String,String> emotionHash = new HashMap<String,String>();
+        emotionHash.put("feeling",this.feeling);
+        emotionHash.put("happiness",Double.toString(this.happiness));
+        emotionHash.put("sadness",Double.toString(this.sadness));
+        emotionHash.put("anger",Double.toString(this.anger));
+        emotionHash.put("person_id",Integer.toString(this.person_id));
+        return emotionHash;
+    }
 }
 
