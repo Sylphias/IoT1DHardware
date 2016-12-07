@@ -1,6 +1,8 @@
 package Main;
 
 import HttpRequests.HttpRequester;
+import IoTData.EmotionData;
+import IoTData.Person;
 import Utilities.MSBlobUploader;
 import com.google.gson.Gson;
 import org.bytedeco.javacpp.opencv_core;
@@ -41,9 +43,18 @@ public class BackgroundRunner {
         int i = 0;
         String id = System.getProperty("user.name");
 
-
-        HttpRequester.generalRequester("iotfocus.herokuapp.com/person/",)
-        HttpRequester.generalRequester("iotfocus.herokuapp.com/person/all_people")
+        String personResponse = HttpRequester.generalRequester("http://iotfocus.herokuapp.com/person/by_name","?name="+id,"","GET");
+        Person pers = null;
+        if(personResponse != null) {
+            pers = new Person(personResponse);
+        }
+        else{
+            // Create a new person.
+            Person p = new Person();
+            p.setName(id);
+            String request = HttpRequester.generalRequester("http://iotfocus.herokuapp.com/person","?name="+id,"","POST");
+            System.out.println(request);
+        }
         try {
             grab.start();
             opencv_core.IplImage img;
@@ -57,31 +68,26 @@ public class BackgroundRunner {
                 if (img != null) {
                     cvFlip(img, img, 1);
                     cvSaveImage(current+"/img/capture"+id+".jpg", img);
-//                  show image on window
                     MSBlobUploader.initializeContainer();
                     String URL = MSBlobUploader.createBlob("testBlob",id);
                     Matcher m = p.matcher("URL");
                     if(m.matches()){
                         URL = URL.substring(m.end(),URL.length()-1);
                     }
-                    HttpRequester.emotionRequester("{\"url\":\""+URL+"\"}","POST",id);
+                    if (pers != null) {
+                       EmotionData ed = HttpRequester.emotionRequester("{\"url\":\"" + URL + "\"}", "POST", pers.getId());
+                        String result = HttpRequester.generalRequester("http://iotfocus.herokuapp.com/emotiondatum",HttpRequester.parameterfier(ed.toHashMap()),"","POST");
+                        System.out.println(result);
+                    }
                 }
                 Thread.sleep(5000);
             }
-
         } catch (Exception e) {
             System.out.println(e);
         }
 
     }
-    public String parameterfier(HashMap<String,String> params){
-        StringBuilder sb = new StringBuilder();
-        sb.append("?");
-        for(HashMap.Entry<String,String> entry: params.entrySet()){
-            sb.append(entry.getKey()+"="+entry.getValue());
-        }
-        return sb.toString();
-    }
+
     public void sendEmotionData(double feeling){
 
     }

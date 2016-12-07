@@ -53,7 +53,6 @@ public class HttpRequester {
                 Gson gson = new Gson();
                 Type type = new TypeToken<Map<String, Map<String, String>>>() {
                 }.getType();
-                String rar = response.toString().substring(1, response.length() - 1);
                 Map<String, Map<String, String>> data = gson.fromJson(response.toString().substring(1, response.length() - 1), type);
                 EmotionData ed = new EmotionData(Double.parseDouble(data.get("scores").get("anger")),Double.parseDouble(data.get("scores").get("happiness")),Double.parseDouble(data.get("scores").get("sadness")),person_id);
 
@@ -71,7 +70,7 @@ public class HttpRequester {
         HttpURLConnection connection = null;
         try{
             if(urlParameters != null){
-                targetURL += "?"+urlParameters;
+                targetURL += urlParameters;
             }
             URL url = new URL(targetURL);
             connection = (HttpURLConnection) url.openConnection();
@@ -82,8 +81,11 @@ public class HttpRequester {
             connection.setDoOutput(true);
 
             //The Following Sends the data stream as a request
+
             DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-            wr.writeBytes(data);
+            if(requestType == "POST" || requestType =="PUT") {
+                wr.writeBytes(data);
+            }
             wr.close();
             InputStream is = connection.getInputStream();
             BufferedReader rd = new BufferedReader(new InputStreamReader(is));
@@ -98,6 +100,15 @@ public class HttpRequester {
             System.out.println(e);
         }
         return null;
+    }
+
+    public static String parameterfier(HashMap<String,String> params){
+        StringBuilder sb = new StringBuilder();
+        sb.append("?");
+        for(HashMap.Entry<String,String> entry: params.entrySet()){
+            sb.append(entry.getKey()+"="+entry.getValue());
+        }
+        return sb.toString();
     }
 
 
