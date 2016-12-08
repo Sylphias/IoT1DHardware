@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4b753756-a6a7-44b5-b480-640033d87997" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/img/captureIlya.jpg" afterPath="$PROJECT_DIR$/img/captureIlya.jpg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/HttpRequests/HttpRequester$1.class" afterPath="$PROJECT_DIR$/target/classes/HttpRequests/HttpRequester$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/HttpRequests/HttpRequester.class" afterPath="$PROJECT_DIR$/target/classes/HttpRequests/HttpRequester.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/Main/BackgroundRunner.class" afterPath="$PROJECT_DIR$/target/classes/Main/BackgroundRunner.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/HttpRequests/HttpRequester.java" afterPath="$PROJECT_DIR$/src/HttpRequests/HttpRequester.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/IoTData/Person.java" afterPath="$PROJECT_DIR$/src/IoTData/Person.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Main/BackgroundRunner.java" afterPath="$PROJECT_DIR$/src/Main/BackgroundRunner.java" />
-    </list>
+    <list default="true" id="4b753756-a6a7-44b5-b480-640033d87997" name="Default" comment="" />
     <ignored path="IoTRaspberryPi.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -995,7 +986,7 @@
       <workItem from="1480938995774" duration="5236000" />
       <workItem from="1480944884112" duration="17022000" />
       <workItem from="1481113360381" duration="6158000" />
-      <workItem from="1481165281834" duration="10456000" />
+      <workItem from="1481165281834" duration="10596000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit, set up framework for using java device">
       <created>1478670934265</created>
@@ -1015,7 +1006,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="80195000" />
+    <option name="totallyTimeSpent" value="80335000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="873" extended-state="6" />
