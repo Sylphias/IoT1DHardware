@@ -1,6 +1,7 @@
 package HttpRequests;
 
 import IoTData.EmotionData;
+import Utilities.UrlList;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.http.HttpEntity;
@@ -41,11 +42,11 @@ import org.apache.http.util.EntityUtils;
 public class HttpRequester {
     public static EmotionData emotionRequester(String urlParameters, String requestType,int person_id){
         HttpURLConnection connection = null;
-        String targetURL = "https://api.projectoxford.ai/emotion/v1.0/recognize";
+//        String targetURL = UrlList.MSEmotionAPIUrl;
 
         try{
 
-            URL url = new URL(targetURL);
+            URL url = new URL(UrlList.MSEmotionAPIUrl);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("Method", requestType);
@@ -73,7 +74,7 @@ public class HttpRequester {
                 }.getType();
                 Map<String, Map<String, String>> data = gson.fromJson(response.toString().substring(1, response.length() - 1), type);
                 EmotionData ed = new EmotionData(Double.parseDouble(data.get("scores").get("anger")),Double.parseDouble(data.get("scores").get("happiness")),Double.parseDouble(data.get("scores").get("sadness")),person_id);
-
+                generalRequester(UrlList.APIUrl,"/emotiondatum",ed.toHashMap(),null,"POST");
             }
             else{
                 return null;
@@ -205,37 +206,6 @@ public class HttpRequester {
         return data;
     }
 
-
-//    public static String responseHandler(){
-//        CloseableHttpClient httpclient = HttpClients.createDefault();
-//        HttpGet httpget = new HttpGet("http://localhost/json");
-//
-//        ResponseHandler<MyJsonObject> rh = new ResponseHandler<MyJsonObject>() {
-//
-//            @Override
-//            public JsonObject handleResponse(
-//                    final HttpResponse response) throws IOException {
-//                StatusLine statusLine = response.getStatusLine();
-//                HttpEntity entity = response.getEntity();
-//                if (statusLine.getStatusCode() >= 300) {
-//                    throw new HttpResponseException(
-//                            statusLine.getStatusCode(),
-//                            statusLine.getReasonPhrase());
-//                }
-//                if (entity == null) {
-//                    throw new ClientProtocolException("Response contains no content");
-//                }
-//                Gson gson = new GsonBuilder().create();
-//                ContentType contentType = ContentType.getOrDefault(entity);
-//                Charset charset = contentType.getCharset();
-//                Reader reader = new InputStreamReader(entity.getContent(), charset);
-//                return gson.fromJson(reader, MyJsonObject.class);
-//            }
-//        };
-//        MyJsonObject myjson = client.execute(httpget, rh);
-//
-//        return "";
-//    }
 
 
 }
