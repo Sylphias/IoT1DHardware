@@ -156,10 +156,12 @@ public class HttpRequester {
         StringBuilder sb = new StringBuilder();
         sb.append("?");
         for(HashMap.Entry<String,String> entry: params.entrySet()){
-            sb.append(entry.getKey()+"="+entry.getValue());
+            String key = String.valueOf(entry.getKey());
+            String value = String.valueOf(entry.getValue());
+
+            sb.append(key+"="+value);
         }
         return sb.toString();
-    }
 
     public static HashMap<String,String> objectifier(String json){
         Gson gson = new Gson();
