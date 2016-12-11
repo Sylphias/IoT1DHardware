@@ -34,7 +34,7 @@ public class BackgroundRunner {
     }
 
     public static void startServer(){
-        getEmotionData();
+        getEmotionData(UrlList.testUrl);
         getTotemData();
         getSeatData();
 
@@ -43,11 +43,10 @@ public class BackgroundRunner {
     private static SerialPort serialPort0;
     private static SerialPort serialPort1;
 
-    public static void getEmotionData(){
+    public static void getEmotionData(String apiUrl){
         HttpRequester req = new HttpRequester();
 
         opencv_core.IplImage image;
-//        System.out.println(HttpRequester.requester("http://jsonplaceholder.typicode.com/posts/","","GET").get("id"));
         FrameGrabber grab = new OpenCVFrameGrabber(0);
 
         Gson gson = new Gson();
@@ -55,52 +54,58 @@ public class BackgroundRunner {
         String id = System.getProperty("user.name");
         HashMap<String,String> personParams = new HashMap<String, String>();
         personParams.put("name",id);
-        String personResponse = HttpRequester.generalRequester(UrlList.APIUrl,"/person/by_name",personParams,"","GET");
-        Person pers = null;
-        if(!personResponse.matches("null")) {
-            pers = new Person(personResponse);
-        }
-        // If we cannot find a person we will create a person
-        else{
-            // Create a new person.
-            Person p = new Person(18,id,'U');
-            String pjson = gson.toJson(p);
-            String request = HttpRequester.generalRequester(UrlList.APIUrl,"/person",p.toHashMap(),pjson,"POST");
-            System.out.println(request);
-            pers = p;
-        }
         try {
-            grab.start();
-            opencv_core.IplImage img;
-            OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
-            OpenCVFrameConverter.ToMat converter2 = new OpenCVFrameConverter.ToMat();
-            Pattern p = Pattern.compile("url:");
-            while (true) {
-                img = converter.convert(grab.grab());
-                opencv_core.Mat mat = new opencv_core.Mat();
-                String current = new java.io.File( "." ).getCanonicalPath();
-                if (img != null) {
-                    cvFlip(img, img, 1);
-                    cvSaveImage(current+"/img/capture"+id+".jpg", img);
-                    MSBlobUploader.initializeContainer();
-                    String URL = MSBlobUploader.createBlob("testBlob",id);
-                    Matcher m = p.matcher("URL");
-                    if(m.matches()){
-                        URL = URL.substring(m.end(),URL.length()-1);
-                    }
-                    if (pers != null) {
-                       EmotionData ed = HttpRequester.emotionRequester("{\"url\":\"" + URL + "\"}", "POST", pers.getId());
-                        if( ed != null) {
-                            ed.setFeeling(ed.getHighestEmotion());
-                            String result = HttpRequester.generalRequester(UrlList.APIUrl, "/emotiondatum", ed.toHashMap(), "", "POST");
-                            System.out.println(result);
+
+            // Find if the person exists in the database from the username of the person
+            String personResponse = HttpRequester.generalRequester(apiUrl, "/person/by_name", personParams, "", "GET");
+            Person pers = null;
+            if (!personResponse.matches("null")) {
+                pers = new Person(personResponse);
+            }
+            // If we cannot find a person we will create a person
+            else {
+                // Create a new person.
+                Person p = new Person(0, id, 'U', "192.127.0.1");
+                String pjson = gson.toJson(p);
+                String request = HttpRequester.generalRequester(apiUrl, "/person", p.toHashMap(), pjson, "POST");
+                System.out.println(request);
+                pers = p;
+            }
+            try {
+                grab.start();
+                opencv_core.IplImage img;
+                OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
+                OpenCVFrameConverter.ToMat converter2 = new OpenCVFrameConverter.ToMat();
+                Pattern p = Pattern.compile("url:");
+                while (true) {
+                    img = converter.convert(grab.grab());
+                    opencv_core.Mat mat = new opencv_core.Mat();
+                    String current = new java.io.File(".").getCanonicalPath();
+                    if (img != null) {
+                        cvFlip(img, img, 1);
+                        cvSaveImage(current + "/img/capture" + id + ".jpg", img);
+                        MSBlobUploader.initializeContainer();
+                        String URL = MSBlobUploader.createBlob("testBlob", id);
+                        Matcher m = p.matcher("URL");
+                        if (m.matches()) {
+                            URL = URL.substring(m.end(), URL.length() - 1);
+                        }
+                        if (pers != null) {
+                            EmotionData ed = HttpRequester.emotionRequester("{\"url\":\"" + URL + "\"}", "POST", pers.getId());
+                            if (ed != null) {
+                                ed.setFeeling(ed.getHighestEmotion());
+                                String result = HttpRequester.generalRequester(apiUrl, "/emotiondatum", ed.toHashMap(), "", "POST");
+                                System.out.println(result);
+                            }
                         }
                     }
+                    Thread.sleep(5000);
                 }
-                Thread.sleep(5000);
+            } catch (Exception e) {
+                System.out.println(e);
             }
-        } catch (Exception e) {
-            System.out.println(e);
+        }catch(Exception e){
+            System.out.println("Failure to connect");
         }
 
     }
@@ -192,7 +197,7 @@ public class BackgroundRunner {
 
                     String params = parameterfier(totemParams);
                     HttpRequester totemReq = new HttpRequester();
-                    totemReq.generalRequester("iotfocus.herokuapp.com/person/",params,"data","PUT");
+//                    totemReq.generalRequester("iotfocus.herokuapp.com/person/",params,"data","PUT");
 
                     System.out.println(receivedDataPomodoro+" sent to server");
 
@@ -229,7 +234,7 @@ public class BackgroundRunner {
 
                     String params = parameterfier(seatParams);
                     HttpRequester totemReq = new HttpRequester();
-                    totemReq.generalRequester("iotfocus.herokuapp.com/person/",params,"data","PUT");
+//                    totemReq.generalRequester("iotfocus.herokuapp.com/person/",params,"data","PUT");
 
                     System.out.println(receivedDataSeat+" sent to server");
 

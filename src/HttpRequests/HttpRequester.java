@@ -74,7 +74,7 @@ public class HttpRequester {
                 }.getType();
                 Map<String, Map<String, String>> data = gson.fromJson(response.toString().substring(1, response.length() - 1), type);
                 EmotionData ed = new EmotionData(Double.parseDouble(data.get("scores").get("anger")),Double.parseDouble(data.get("scores").get("happiness")),Double.parseDouble(data.get("scores").get("sadness")),Double.parseDouble(data.get("scores").get("neutral")),person_id);
-                generalRequester(UrlList.APIUrl,"/emotiondatum",ed.toHashMap(),null,"POST");
+                generalRequester(UrlList.testUrl,"/emotiondatum",ed.toHashMap(),null,"POST");
             }
             else{
                 return null;
@@ -152,16 +152,17 @@ public class HttpRequester {
 // Started GET "/person/by_name?name=Ilya" for 202.94.70.25 at 2016-12-07 18:54:08 +0000
 // Started GET "/person/by_name?name=Ilya" for 202.94.70.51 at 2016-12-07 19:10:18 +0000
 
-    public static String parameterfier(HashMap<String,String> params){
+    public static String parameterfier(HashMap<String,String> params) {
         StringBuilder sb = new StringBuilder();
         sb.append("?");
-        for(HashMap.Entry<String,String> entry: params.entrySet()){
+        for (HashMap.Entry<String, String> entry : params.entrySet()) {
             String key = String.valueOf(entry.getKey());
             String value = String.valueOf(entry.getValue());
 
-            sb.append(key+"="+value);
+            sb.append(key + "=" + value);
         }
         return sb.toString();
+    }
 
     public static HashMap<String,String> objectifier(String json){
         Gson gson = new Gson();

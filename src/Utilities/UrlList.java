@@ -6,4 +6,5 @@ package Utilities;
 public class UrlList {
     public static final String APIUrl = "iotfocus.herokuapp.com";
     public static final String MSEmotionAPIUrl = "https://api.projectoxford.ai/emotion/v1.0/recognize";
+    public static final String testUrl = "localhost:3000/api";
 }
