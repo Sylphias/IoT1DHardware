@@ -10,7 +10,7 @@ import java.net.Socket;
  */
 public class SensorSocketClient {
 
-    SensorSocketClient(String ServerName, Integer PortNumber) {
+    public void SensorSocketClient(String ServerName, Integer PortNumber) {
 
         Socket client = null;
         DataOutputStream sensorData = null;
@@ -24,11 +24,12 @@ public class SensorSocketClient {
             System.out.println(e);
         }
         try {
-            sensorData.writeChars(seatParams);
-            sensorData.writeChars(totemParams);
+//            sensorData.writeChars(seatParams);
+//            sensorData.writeChars(totemParams);
 
             sensorData.close();
-            client.close()
+            client.close();
+
         } catch(Exception e){
             System.out.println(e);
         }

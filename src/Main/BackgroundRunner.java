@@ -3,6 +3,7 @@ package Main;
 import HttpRequests.HttpRequester;
 import IoTData.EmotionData;
 import IoTData.Person;
+import Multithreader.Multithreader;
 import Utilities.MSBlobUploader;
 import Utilities.UrlList;
 import com.google.gson.Gson;
@@ -35,8 +36,17 @@ public class BackgroundRunner {
 
     public static void startServer(){
 //        getEmotionData();
-        getTotemData();
-        getSeatData();
+//        getTotemData();
+//        getSeatData();
+
+        Multithreader emotion = new Multithreader("Emotion Sensor");
+        Multithreader seat = new Multithreader("Seat Sensor");
+        Multithreader totem = new Multithreader("Totem");
+        emotion.start();
+        seat.start();
+        totem.start();
+
+
 
     }
 
