@@ -4,6 +4,7 @@ import HttpRequests.HttpRequester;
 import IoTData.EmotionData;
 import IoTData.Person;
 import Utilities.MSBlobUploader;
+import Utilities.UrlList;
 import com.google.gson.Gson;
 import jssc.SerialPort;
 import jssc.SerialPortEvent;
@@ -52,18 +53,21 @@ public class BackgroundRunner {
         Gson gson = new Gson();
         int i = 0;
         String id = System.getProperty("user.name");
-
-        String personResponse = HttpRequester.generalRequester("http://iotfocus.herokuapp.com/person/by_name","?name="+id,"","GET");
+        HashMap<String,String> personParams = new HashMap<String, String>();
+        personParams.put("name",id);
+        String personResponse = HttpRequester.generalRequester(UrlList.APIUrl,"/person/by_name",personParams,"","GET");
         Person pers = null;
-        if(personResponse != null) {
+        if(!personResponse.matches("null")) {
             pers = new Person(personResponse);
         }
+        // If we cannot find a person we will create a person
         else{
             // Create a new person.
-            Person p = new Person();
-            p.setName(id);
-            String request = HttpRequester.generalRequester("http://iotfocus.herokuapp.com/person","?name="+id,"","POST");
+            Person p = new Person(18,id,'U');
+            String pjson = gson.toJson(p);
+            String request = HttpRequester.generalRequester(UrlList.APIUrl,"/person",p.toHashMap(),pjson,"POST");
             System.out.println(request);
+            pers = p;
         }
         try {
             grab.start();
@@ -86,8 +90,11 @@ public class BackgroundRunner {
                     }
                     if (pers != null) {
                        EmotionData ed = HttpRequester.emotionRequester("{\"url\":\"" + URL + "\"}", "POST", pers.getId());
-                        String result = HttpRequester.generalRequester("http://iotfocus.herokuapp.com/emotiondatum", parameterfier(ed.toHashMap()),"","POST");
-                        System.out.println(result);
+                        if( ed != null) {
+                            ed.setFeeling(ed.getHighestEmotion());
+                            String result = HttpRequester.generalRequester(UrlList.APIUrl, "/emotiondatum", ed.toHashMap(), "", "POST");
+                            System.out.println(result);
+                        }
                     }
                 }
                 Thread.sleep(5000);

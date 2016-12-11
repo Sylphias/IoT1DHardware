@@ -8,21 +8,23 @@ import java.util.HashMap;
 public class EmotionData {
     private long timestamp;
     private String feeling;
-    private double anger, happiness , sadness;
+    private double anger, happiness , sadness, neutral;
     private int id, person_id;
 
-    public EmotionData(long timestamp, String feeling, double anger, double happiness, double sadness, int id, int person_id) {
+    public EmotionData(long timestamp, String feeling, double anger, double happiness, double sadness,double neutral, int id, int person_id) {
         this.timestamp = timestamp;
         this.feeling = feeling;
         this.anger = anger;
         this.happiness = happiness;
+        this.neutral = neutral;
         this.sadness = sadness;
         this.id = id;
         this.person_id = person_id;
     }
 
-    public EmotionData(double anger, double happiness, double sadness, int person_id) {
+    public EmotionData(double anger, double happiness, double sadness,double neutral, int person_id) {
         this.anger = anger;
+        this.neutral = neutral;
         this.happiness = happiness;
         this.sadness = sadness;
         this.person_id = person_id;
@@ -85,6 +87,14 @@ public class EmotionData {
         this.person_id = person_id;
     }
 
+    public double getNeutral() {
+        return neutral;
+    }
+
+    public void setNeutral(double neutral) {
+        this.neutral = neutral;
+    }
+
     public String getHighestEmotion(){
         HashMap<String,Double> emotionMap = new HashMap<String,Double>();
         emotionMap.put("Happiness",this.getHappiness());
@@ -98,6 +108,13 @@ public class EmotionData {
                 maxEntry = entry;
             }
         }
+        // Sometimes the emotions are not detected too strongly, depends a little on lighting
+        if(maxEntry.getValue() < 0.3 && this.neutral > 0.3){
+            System.out.println("Neutral");
+            return "Neutral";
+
+        }
+        System.out.println(maxEntry.getKey().toString());
         return maxEntry.getKey();
     }
 
@@ -108,6 +125,7 @@ public class EmotionData {
         emotionHash.put("happiness",Double.toString(this.happiness));
         emotionHash.put("sadness",Double.toString(this.sadness));
         emotionHash.put("anger",Double.toString(this.anger));
+        emotionHash.put("neutral",Double.toString(this.neutral));
         emotionHash.put("person_id",Integer.toString(this.person_id));
         return emotionHash;
     }

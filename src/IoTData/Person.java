@@ -22,6 +22,14 @@ public class Person {
         this.gender = gender;
     }
 
+    public Person( int age, String name, char gender) {
+        this.id = id;
+        this.age = age;
+        this.name = name;
+        this.gender = gender;
+    }
+
+
     public Person() {
     }
 
@@ -31,7 +39,7 @@ public class Person {
         Type type = new TypeToken<HashMap<String, String>>() {}.getType();
         personData = gson.fromJson(jsonString,type);
         this.name = personData.get("name");
-        this.age = Integer.parseInt(personData.get("name"));
+        this.age = Integer.parseInt(personData.get("age"));
         this.gender = personData.get("gender").charAt(0);
         this.id = Integer.parseInt(personData.get("id"));
     }
@@ -69,6 +77,13 @@ public class Person {
         this.gender = gender;
     }
 
-
+    public HashMap<String,String> toHashMap(){
+        HashMap<String,String> personHash = new HashMap<String, String>();
+        personHash.put("id",Integer.toString(this.id));
+        personHash.put("name",this.name);
+        personHash.put("age",Integer.toString(this.age));
+        personHash.put("gender",Character.toString(this.gender));
+        return personHash;
+    }
 
 }
