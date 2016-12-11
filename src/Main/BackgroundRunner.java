@@ -34,7 +34,7 @@ public class BackgroundRunner {
     }
 
     public static void startServer(){
-        getEmotionData();
+//        getEmotionData();
         getTotemData();
         getSeatData();
 
@@ -217,12 +217,12 @@ public class BackgroundRunner {
 
                     HashMap seatParams = new HashMap();
                     Integer i = Integer.parseInt(receivedDataSeat);
-                    boolean is_sitting;
+                    String is_sitting;
 
                     if (i == 1){
-                        is_sitting = true;
+                        is_sitting = "true";
                     } else{
-                        is_sitting = false;
+                        is_sitting = "false";
                     }
 
                     seatParams.put("is_sitting",is_sitting);
