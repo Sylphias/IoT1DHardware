@@ -73,7 +73,7 @@ public class HttpRequester {
                 Type type = new TypeToken<Map<String, Map<String, String>>>() {
                 }.getType();
                 Map<String, Map<String, String>> data = gson.fromJson(response.toString().substring(1, response.length() - 1), type);
-                EmotionData ed = new EmotionData(Double.parseDouble(data.get("scores").get("anger")),Double.parseDouble(data.get("scores").get("happiness")),Double.parseDouble(data.get("scores").get("sadness")),person_id);
+                EmotionData ed = new EmotionData(Double.parseDouble(data.get("scores").get("anger")),Double.parseDouble(data.get("scores").get("happiness")),Double.parseDouble(data.get("scores").get("sadness")),Double.parseDouble(data.get("scores").get("neutral")),person_id);
                 generalRequester(UrlList.APIUrl,"/emotiondatum",ed.toHashMap(),null,"POST");
             }
             else{
@@ -85,43 +85,6 @@ public class HttpRequester {
         return null;
     }
 
-//    public static String generalRequester(String targetURL,String urlParameters,String data, String requestType){
-//        HttpURLConnection connections = null;
-//        try{
-//            String fullURL = targetURL;
-//            if(urlParameters != null){
-//                fullURL += urlParameters;
-//            }
-//            URL url = new URL(fullURL);
-//            connections = (HttpURLConnection) url.openConnection();
-//            connections.setRequestProperty("Connection","keep-alive");
-//            connections.setRequestProperty("Content-Type", "application/json");
-////            connections.setRequestProperty("Method", requestType);
-//            connections.setRequestProperty("Host", targetURL);
-//            connections.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US) AppleWebKit/525.28 (KHTML, like Gecko) Version/3.2.2 Safari/525.28.1");
-//            connections.setUseCaches(false);
-//            connections.setDoOutput(true);
-//            connections.setRequestMethod(requestType);
-//            //The Following Sends the data stream as a request
-//            if((requestType == "POST" || requestType =="PUT") && data != "") {
-//                DataOutputStream wr = new DataOutputStream(connections.getOutputStream());
-//                wr.writeBytes(data);
-//                wr.close();
-//            }
-//            InputStream is = connections.getInputStream();
-//            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-//            StringBuilder response = new StringBuilder();
-//            String line;
-//            while((line = rd.readLine()) != null ){
-//                response.append(line);
-//            }
-//            rd.close();
-//            return response.toString();
-//        }catch(Exception e){
-//            System.out.println(e);
-//        }
-//        return null;
-//    }
 
     public static String generalRequester(String targetURL, String path, HashMap<String,String> urlParameters, String data, String requestType){
         HttpURLConnection connections = null;

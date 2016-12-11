@@ -4,6 +4,7 @@ import HttpRequests.HttpRequester;
 import IoTData.EmotionData;
 import IoTData.Person;
 import Utilities.MSBlobUploader;
+import Utilities.UrlList;
 import com.google.gson.Gson;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacv.FrameGrabber;
@@ -44,7 +45,7 @@ public class BackgroundRunner {
         String id = System.getProperty("user.name");
         HashMap<String,String> personParams = new HashMap<String, String>();
         personParams.put("name",id);
-        String personResponse = HttpRequester.generalRequester("iotfocus.herokuapp.com/","person/by_name",personParams,"","GET");
+        String personResponse = HttpRequester.generalRequester(UrlList.APIUrl,"/person/by_name",personParams,"","GET");
         Person pers = null;
         if(!personResponse.matches("null")) {
             pers = new Person(personResponse);
@@ -54,7 +55,7 @@ public class BackgroundRunner {
             // Create a new person.
             Person p = new Person(18,id,'U');
             String pjson = gson.toJson(p);
-            String request = HttpRequester.generalRequester("iotfocus.herokuapp.com","/person",p.toHashMap(),pjson,"POST");
+            String request = HttpRequester.generalRequester(UrlList.APIUrl,"/person",p.toHashMap(),pjson,"POST");
             System.out.println(request);
             pers = p;
         }
@@ -80,7 +81,8 @@ public class BackgroundRunner {
                     if (pers != null) {
                        EmotionData ed = HttpRequester.emotionRequester("{\"url\":\"" + URL + "\"}", "POST", pers.getId());
                         if( ed != null) {
-                            String result = HttpRequester.generalRequester("iotfocus.herokuapp.com", "emotiondatum", ed.toHashMap(), "", "POST");
+                            ed.setFeeling(ed.getHighestEmotion());
+                            String result = HttpRequester.generalRequester(UrlList.APIUrl, "/emotiondatum", ed.toHashMap(), "", "POST");
                             System.out.println(result);
                         }
                     }
