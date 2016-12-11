@@ -1,6 +1,7 @@
 package Multithreader;
 
 import Main.BackgroundRunner;
+import Utilities.UrlList;
 
 /**
  * Created by Charles on 12/12/2016.
@@ -19,7 +20,7 @@ public class Multithreader implements Runnable {
         System.out.println("Running "+threadName);
         try {
             if(threadName.contains("Emotion")){
-                BackgroundRunner.getEmotionData();
+                BackgroundRunner.getEmotionData(UrlList.testUrl);
             } else if(threadName.contains(("Seat"))){
                 BackgroundRunner.getSeatData();
             } else if(threadName.contains("Totem")){
