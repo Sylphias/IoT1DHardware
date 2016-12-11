@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static HttpRequests.HttpRequester.parameterfier;
+//import static HttpRequests.HttpRequester.parameterfier;
 import static org.bytedeco.javacpp.opencv_core.cvFlip;
 import static org.bytedeco.javacpp.opencv_imgcodecs.cvSaveImage;
 
@@ -187,14 +187,16 @@ public class BackgroundRunner {
                     }
 
                     totemParams.put("state",state);
-                    totemParams.put("id",001);
-                    totemParams.put("person_id",001);
+//                    totemParams.put("id",001);
+//                    totemParams.put("person_id",001);
 
-                    String params = parameterfier(totemParams);
-                    HttpRequester totemReq = new HttpRequester();
-                    totemReq.generalRequester("iotfocus.herokuapp.com/person/",params,"data","PUT");
+//                    String params = parameterfier(totemParams);
+//                    HttpRequester totemReq = new HttpRequester();
+//                    totemReq.generalRequester("iotfocus.herokuapp.com/person/",params,"data","PUT");
+                    String result = HttpRequester.generalRequester(UrlList.APIUrl, "/totemdatum", totemParams, "", "POST");
 
-                    System.out.println(receivedDataPomodoro+" sent to server");
+
+                    System.out.println(result);
 
                 }
                 catch (SerialPortException ex) {
@@ -224,18 +226,18 @@ public class BackgroundRunner {
                     }
 
                     seatParams.put("is_sitting",is_sitting);
-                    seatParams.put("id",001);
-                    seatParams.put("person_id",001);
+//                    seatParams.put("id",001);
+//                    seatParams.put("person_id",001);
 
-                    String params = parameterfier(seatParams);
-                    HttpRequester totemReq = new HttpRequester();
-                    totemReq.generalRequester("iotfocus.herokuapp.com/person/",params,"data","PUT");
+//                    HttpRequester totemReq = new HttpRequester();
+                    String result = HttpRequester.generalRequester(UrlList.APIUrl, "/seatdatum", seatParams, "", "POST");
 
-                    System.out.println(receivedDataSeat+" sent to server");
+
+                    System.out.println(result);
 
                 }
                 catch (SerialPortException ex) {
-                    System.out.println("Error in receiving response from pomodoro port: " + ex);
+                    System.out.println("Error in receiving response from seat port: " + ex);
                 }
             }
         }
