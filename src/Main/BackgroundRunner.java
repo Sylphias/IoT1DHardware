@@ -38,10 +38,10 @@ public class BackgroundRunner {
     public static void startServer(){
 
         perss = initPerson();
-        Multithreader emotion = new Multithreader("Emotion Sensor");
+        //Multithreader emotion = new Multithreader("Emotion Sensor");
         Multithreader seat = new Multithreader("Seat Sensor");
         Multithreader totem = new Multithreader("Totem");
-        emotion.start();
+        //emotion.start();
         seat.start();
         totem.start();
         //getEmotionData(UrlList.testUrl);
@@ -56,14 +56,14 @@ public class BackgroundRunner {
     public static Person initPerson(){
 
         Gson gson = new Gson();
-        String id = System.getProperty("user.name");
+        String name = System.getProperty("user.name");
         HashMap<String,String> personParams = new HashMap<String, String>();
-        personParams.put("name",id);
+        personParams.put("name",name);
         try {
 
             // Find if the person exists in the database from the username of the person
             String personResponse = HttpRequester.generalRequester(UrlList.APIUrl, "/person/by_name", personParams, "", "GET");
-            Person pers = null;
+            Person pers;
             if (!personResponse.matches("null")) {
                 pers = new Person(personResponse);
                 return pers;
@@ -71,7 +71,7 @@ public class BackgroundRunner {
             // If we cannot find a person we will create a person
             else {
                 // Create a new person.
-                Person p = new Person(0, id, 'U', "192.127.0.1");
+                Person p = new Person(0, name, 'U');
                 String pjson = gson.toJson(p);
                 String request = HttpRequester.generalRequester(UrlList.APIUrl, "/person", p.toHashMap(), pjson, "POST");
                 System.out.println(request);
@@ -81,6 +81,7 @@ public class BackgroundRunner {
             }catch(Exception e) {
 
             System.out.println(e);
+            System.exit(0);
         }
 
         return null;
@@ -218,7 +219,6 @@ public class BackgroundRunner {
 
                         HashMap totemParams = new HashMap();
                         Integer i = Integer.parseInt(receivedDataPomodoro);
-                        System.out.println(i);
                         String state = "Standby";
 
                         switch (i) {
@@ -239,7 +239,7 @@ public class BackgroundRunner {
                         }
 
                         totemParams.put("state", state);
-                        totemParams.put("id", Integer.toString(perss.getId()));
+                        totemParams.put("person_id", Integer.toString(perss.getId()));
 
                         String result = HttpRequester.generalRequester(UrlList.APIUrl, "/totemdatum", totemParams, "", "POST");
                         System.out.println(totemParams);
