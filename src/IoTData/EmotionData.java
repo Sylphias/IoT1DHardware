@@ -109,7 +109,7 @@ public class EmotionData {
             }
         }
         // Sometimes the emotions are not detected too strongly, depends a little on lighting
-        if(maxEntry.getValue() < 0.3 && this.neutral > 0.3){
+        if(maxEntry.getValue() < 0.2 && this.neutral > 0.3){
             System.out.println("Neutral");
             return "Neutral";
 
