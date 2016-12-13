@@ -96,7 +96,7 @@ public class HttpRequester {
 
             HttpClient client = HttpClientBuilder.create().build();
             //The Following Sends the data stream as a request
-            if ((requestType == "POST" || requestType == "PUT") && data != "") {
+            if ((requestType == "POST" || requestType == "PUT")) {
                 HttpPost hp = new HttpPost(String.valueOf(uri));
                 List<NameValuePair> urlParams = new ArrayList<NameValuePair>();
                 for (HashMap.Entry<String, String> params : urlParameters.entrySet()) {
