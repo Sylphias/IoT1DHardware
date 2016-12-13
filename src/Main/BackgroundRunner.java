@@ -126,15 +126,19 @@ public class BackgroundRunner {
             serialPort0.openPort();
             System.out.println("Totem opened");
 
-            serialPort0.setParams(SerialPort.BAUDRATE_9600,
-                    SerialPort.DATABITS_8,
-                    SerialPort.STOPBITS_1,
-                    SerialPort.PARITY_NONE);
+                serialPort0.setParams(SerialPort.BAUDRATE_9600,
+                        SerialPort.DATABITS_8,
+                        SerialPort.STOPBITS_1,
+                        SerialPort.PARITY_NONE);
 
-            serialPort0.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN |
-                    SerialPort.FLOWCONTROL_RTSCTS_OUT);
+                serialPort0.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN |
+                        SerialPort.FLOWCONTROL_RTSCTS_OUT);
 
-            serialPort0.addEventListener(new PortReader0(), SerialPort.MASK_RXCHAR);
+                serialPort0.addEventListener(new PortReader0(), SerialPort.MASK_RXCHAR);
+
+            while(true){
+
+            }
 
         }
         catch (SerialPortException ex) {
@@ -152,15 +156,22 @@ public class BackgroundRunner {
             serialPort1.openPort();
             System.out.println("Seat sensor opened");
 
-            serialPort1.setParams(SerialPort.BAUDRATE_9600,
-                    SerialPort.DATABITS_8,
-                    SerialPort.STOPBITS_1,
-                    SerialPort.PARITY_NONE);
 
-            serialPort1.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN |
-                    SerialPort.FLOWCONTROL_RTSCTS_OUT);
 
-            serialPort1.addEventListener(new PortReader1(), SerialPort.MASK_RXCHAR);
+                serialPort1.setParams(SerialPort.BAUDRATE_9600,
+                        SerialPort.DATABITS_8,
+                        SerialPort.STOPBITS_1,
+                        SerialPort.PARITY_NONE);
+
+                serialPort1.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN |
+                        SerialPort.FLOWCONTROL_RTSCTS_OUT);
+
+                serialPort1.addEventListener(new PortReader1(), SerialPort.MASK_RXCHAR);
+
+            while(true){
+
+            }
+
         }
         catch (SerialPortException ex) {
             System.out.println("Error writing data to seat sensor port: " + ex);
@@ -176,44 +187,45 @@ public class BackgroundRunner {
 
         @Override
         public void serialEvent(SerialPortEvent event) {
-            if(event.isRXCHAR() && event.getEventValue() > 0) {
-                try {
-                    String receivedDataPomodoro = serialPort0.readString(event.getEventValue());
-                    System.out.println("POMODORO " + receivedDataPomodoro);
 
-                    HashMap totemParams = new HashMap();
-                    Integer i = Integer.parseInt(receivedDataPomodoro);
-                    String state = "Standby";
+                if (event.isRXCHAR() && event.getEventValue() > 0) {
+                    try {
+                        String receivedDataPomodoro = serialPort0.readString(event.getEventValue());
+                        System.out.println("POMODORO " + receivedDataPomodoro);
 
-                    switch(i){
-                        case 0:
-                            state = "Email";
-                        case 1:
-                            state = "Meeting";
-                        case 2:
-                            state = "Coding";
-                        case 3:
-                            state = "Break";
-                        case 4:
-                            state = "Research";
-                    }
+                        HashMap totemParams = new HashMap();
+                        Integer i = Integer.parseInt(receivedDataPomodoro);
+                        String state = "Standby";
 
-                    totemParams.put("state",state);
+                        switch (i) {
+                            case 0:
+                                state = "Email";
+                            case 1:
+                                state = "Meeting";
+                            case 2:
+                                state = "Coding";
+                            case 3:
+                                state = "Break";
+                            case 4:
+                                state = "Research";
+                        }
+
+                        totemParams.put("state", state);
 //                    totemParams.put("id",001);
 //                    totemParams.put("person_id",001);
 
 //                    String params = parameterfier(totemParams);
 //                    HttpRequester totemReq = new HttpRequester();
 //                    totemReq.generalRequester("iotfocus.herokuapp.com/person/",params,"data","PUT");
-                    String result = HttpRequester.generalRequester(UrlList.APIUrl, "/totemdatum", totemParams, "", "POST");
+                        String result = HttpRequester.generalRequester(UrlList.APIUrl, "/totemdatum", totemParams, "", "POST");
 
-                    System.out.println(result);
+                        System.out.println(result);
 
+                    } catch (SerialPortException ex) {
+                        System.out.println("Error in receiving response from totem port: " + ex);
+                    }
                 }
-                catch (SerialPortException ex) {
-                    System.out.println("Error in receiving response from totem port: " + ex);
-                }
-            }
+
         }
     }
 
