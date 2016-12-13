@@ -36,6 +36,7 @@ public class BackgroundRunner {
 
     public static void startServer(){
 
+        initPerson();
         Multithreader emotion = new Multithreader("Emotion Sensor");
         Multithreader seat = new Multithreader("Seat Sensor");
         Multithreader totem = new Multithreader("Totem");
@@ -46,76 +47,88 @@ public class BackgroundRunner {
 
 
     }
-
+    public static Person pers = null;
     private static SerialPort serialPort0;
     private static SerialPort serialPort1;
 
-    public static void getEmotionData(String apiUrl){
-        HttpRequester req = new HttpRequester();
+    public static Person initPerson(){
 
-        opencv_core.IplImage image;
-        FrameGrabber grab = new OpenCVFrameGrabber(0);
-
-        Gson gson = new Gson();
-        int i = 0;
         String id = System.getProperty("user.name");
         HashMap<String,String> personParams = new HashMap<String, String>();
         personParams.put("name",id);
+        Gson gson = new Gson();
+        Person perss = null;
+
         try {
 
             // Find if the person exists in the database from the username of the person
-            String personResponse = HttpRequester.generalRequester(apiUrl, "/person/by_name", personParams, "", "GET");
-            Person pers = null;
+            String personResponse = HttpRequester.generalRequester(UrlList.APIUrl, "/person/by_name", personParams, "", "GET");
+
             if (!personResponse.matches("null")) {
-                pers = new Person(personResponse);
+                perss = new Person(personResponse);
             }
             // If we cannot find a person we will create a person
             else {
                 // Create a new person.
                 Person p = new Person(0, id, 'U', "192.127.0.1");
                 String pjson = gson.toJson(p);
-                String request = HttpRequester.generalRequester(apiUrl, "/person", p.toHashMap(), pjson, "POST");
+                String request = HttpRequester.generalRequester(UrlList.APIUrl, "/person", p.toHashMap(), pjson, "POST");
                 System.out.println(request);
-                pers = p;
+                perss = p;
             }
-            try {
-                grab.start();
-                opencv_core.IplImage img;
-                OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
-                OpenCVFrameConverter.ToMat converter2 = new OpenCVFrameConverter.ToMat();
-                Pattern p = Pattern.compile("url:");
-                while (true) {
-                    img = converter.convert(grab.grab());
-                    opencv_core.Mat mat = new opencv_core.Mat();
-                    String current = new java.io.File(".").getCanonicalPath();
-                    if (img != null) {
-                        cvFlip(img, img, 1);
-                        cvSaveImage(current + "/img/capture" + id + ".jpg", img);
-                        MSBlobUploader.initializeContainer();
-                        String URL = MSBlobUploader.createBlob("testBlob", id);
-                        Matcher m = p.matcher("URL");
-                        if (m.matches()) {
-                            URL = URL.substring(m.end(), URL.length() - 1);
-                        }
-                        if (pers != null) {
-                            EmotionData ed = HttpRequester.emotionRequester("{\"url\":\"" + URL + "\"}", "POST", pers.getId());
-                            if (ed != null) {
-                                ed.setFeeling(ed.getHighestEmotion());
-                                String result = HttpRequester.generalRequester(apiUrl, "/emotiondatum", ed.toHashMap(), "", "POST");
-                                System.out.println(result);
-                            }
+
+        }catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return perss;
+    }
+
+    public static void getEmotionData(Person pers) {
+        HttpRequester req = new HttpRequester();
+
+        opencv_core.IplImage image;
+        FrameGrabber grab = new OpenCVFrameGrabber(0);
+
+        int i = 0;
+        String id = System.getProperty("user.name");
+
+        try {
+
+            grab.start();
+            opencv_core.IplImage img;
+            OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
+            OpenCVFrameConverter.ToMat converter2 = new OpenCVFrameConverter.ToMat();
+            Pattern p = Pattern.compile("url:");
+            while (true) {
+                img = converter.convert(grab.grab());
+                opencv_core.Mat mat = new opencv_core.Mat();
+                String current = new java.io.File(".").getCanonicalPath();
+                if (img != null) {
+                    cvFlip(img, img, 1);
+                    cvSaveImage(current + "/img/capture" + id + ".jpg", img);
+                    MSBlobUploader.initializeContainer();
+                    String URL = MSBlobUploader.createBlob("testBlob", id);
+                    Matcher m = p.matcher("URL");
+                    if (m.matches()) {
+                        URL = URL.substring(m.end(), URL.length() - 1);
+                    }
+                    if (pers != null) {
+                        EmotionData ed = HttpRequester.emotionRequester("{\"url\":\"" + URL + "\"}", "POST", pers.getId());
+                        if (ed != null) {
+                            ed.setFeeling(ed.getHighestEmotion());
+                            String result = HttpRequester.generalRequester(UrlList.APIUrl, "/emotiondatum", ed.toHashMap(), "", "POST");
+                            System.out.println(result);
                         }
                     }
                     Thread.sleep(5000);
                 }
-            } catch (Exception e) {
-                System.out.println(e);
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println("Failure to connect");
         }
-
     }
+
 
     public static void getTotemData(){
         String pomodoroPort = "COM9";
@@ -168,6 +181,7 @@ public class BackgroundRunner {
 
                 serialPort1.addEventListener(new PortReader1(), SerialPort.MASK_RXCHAR);
 
+
             while(true){
 
             }
@@ -211,6 +225,7 @@ public class BackgroundRunner {
                         }
 
                         totemParams.put("state", state);
+                        totemParams.put("id", pers.getId());
 //                    totemParams.put("id",001);
 //                    totemParams.put("person_id",001);
 
@@ -249,6 +264,8 @@ public class BackgroundRunner {
                     }
 
                     seatParams.put("is_sitting",is_sitting);
+                    seatParams.put("id", pers.getId());
+
 //                    seatParams.put("id",001);
 //                    seatParams.put("person_id",001);
 
