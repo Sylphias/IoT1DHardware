@@ -42,7 +42,7 @@ public class BackgroundRunner {
         emotion.start();
         seat.start();
         totem.start();
-        getEmotionData(UrlList.testUrl);
+        //getEmotionData(UrlList.testUrl);
 
 
     }

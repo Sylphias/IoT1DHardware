@@ -74,7 +74,7 @@ public class HttpRequester {
                 }.getType();
                 Map<String, Map<String, String>> data = gson.fromJson(response.toString().substring(1, response.length() - 1), type);
                 EmotionData ed = new EmotionData(Double.parseDouble(data.get("scores").get("anger")),Double.parseDouble(data.get("scores").get("happiness")),Double.parseDouble(data.get("scores").get("sadness")),Double.parseDouble(data.get("scores").get("neutral")),person_id);
-                generalRequester(UrlList.testUrl,"/emotiondatum",ed.toHashMap(),null,"POST");
+                generalRequester(UrlList.APIUrl,"/emotiondatum",ed.toHashMap(),null,"POST");
             }
             else{
                 return null;
