@@ -1,5 +1,7 @@
 package IoTData;
 
+import java.util.HashMap;
+
 /**
  * Created by Ilya on 8/11/16.
  */
@@ -45,5 +47,15 @@ public class TotemData {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public HashMap<String,String> toHashMap() {
+        HashMap<String, String> totemHash = new HashMap<String, String>();
+        totemHash.put("id", Integer.toString(this.id));
+        totemHash.put("person_id", Integer.toString(this.person_id));
+        totemHash.put("state", this.state);
+        totemHash.put("id", Long.toString(this.timestamp));
+
+        return totemHash;
     }
 }

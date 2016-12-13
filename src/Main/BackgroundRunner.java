@@ -3,6 +3,7 @@ package Main;
 import HttpRequests.HttpRequester;
 import IoTData.EmotionData;
 import IoTData.Person;
+import IoTData.TotemData;
 import Multithreader.Multithreader;
 import Utilities.MSBlobUploader;
 import Utilities.UrlList;
@@ -36,6 +37,7 @@ public class BackgroundRunner {
 
     public static void startServer(){
 
+        perss = initPerson();
         Multithreader emotion = new Multithreader("Emotion Sensor");
         Multithreader seat = new Multithreader("Seat Sensor");
         Multithreader totem = new Multithreader("Totem");
@@ -49,35 +51,52 @@ public class BackgroundRunner {
 
     private static SerialPort serialPort0;
     private static SerialPort serialPort1;
+    public static Person perss;
 
-    public static void getEmotionData(String apiUrl){
-        HttpRequester req = new HttpRequester();
-
-        opencv_core.IplImage image;
-        FrameGrabber grab = new OpenCVFrameGrabber(0);
+    public static Person initPerson(){
 
         Gson gson = new Gson();
-        int i = 0;
         String id = System.getProperty("user.name");
         HashMap<String,String> personParams = new HashMap<String, String>();
         personParams.put("name",id);
         try {
 
             // Find if the person exists in the database from the username of the person
-            String personResponse = HttpRequester.generalRequester(apiUrl, "/person/by_name", personParams, "", "GET");
+            String personResponse = HttpRequester.generalRequester(UrlList.APIUrl, "/person/by_name", personParams, "", "GET");
             Person pers = null;
             if (!personResponse.matches("null")) {
                 pers = new Person(personResponse);
+                return pers;
             }
             // If we cannot find a person we will create a person
             else {
                 // Create a new person.
                 Person p = new Person(0, id, 'U', "192.127.0.1");
                 String pjson = gson.toJson(p);
-                String request = HttpRequester.generalRequester(apiUrl, "/person", p.toHashMap(), pjson, "POST");
+                String request = HttpRequester.generalRequester(UrlList.APIUrl, "/person", p.toHashMap(), pjson, "POST");
                 System.out.println(request);
                 pers = p;
+                return pers;
             }
+            }catch(Exception e) {
+
+            System.out.println(e);
+        }
+
+        return null;
+
+    }
+
+    public static void getEmotionData(String apiUrl){
+        HttpRequester req = new HttpRequester();
+        String id = System.getProperty("user.name");
+
+
+        opencv_core.IplImage image;
+        FrameGrabber grab = new OpenCVFrameGrabber(0);
+
+        try{
+
             try {
                 grab.start();
                 opencv_core.IplImage img;
@@ -97,9 +116,11 @@ public class BackgroundRunner {
                         if (m.matches()) {
                             URL = URL.substring(m.end(), URL.length() - 1);
                         }
-                        if (pers != null) {
-                            EmotionData ed = HttpRequester.emotionRequester("{\"url\":\"" + URL + "\"}", "POST", pers.getId());
+                        if (perss != null) {
+                            EmotionData ed = HttpRequester.emotionRequester("{\"url\":\"" + URL + "\"}", "POST", perss.getId());
                             if (ed != null) {
+                                System.out.println("here"+ed.getPerson_id());
+
                                 ed.setFeeling(ed.getHighestEmotion());
                                 String result = HttpRequester.generalRequester(apiUrl, "/emotiondatum", ed.toHashMap(), "", "POST");
                                 System.out.println(result);
@@ -118,7 +139,7 @@ public class BackgroundRunner {
     }
 
     public static void getTotemData(){
-        String pomodoroPort = "COM9";
+        String pomodoroPort = "COM8";
 
         serialPort0 = new SerialPort(pomodoroPort);
 
@@ -143,6 +164,7 @@ public class BackgroundRunner {
         }
         catch (SerialPortException ex) {
             System.out.println("Error writing data to totem port: " + ex);
+
         }
 
     }
@@ -167,6 +189,7 @@ public class BackgroundRunner {
                         SerialPort.FLOWCONTROL_RTSCTS_OUT);
 
                 serialPort1.addEventListener(new PortReader1(), SerialPort.MASK_RXCHAR);
+
 
             while(true){
 
@@ -195,31 +218,48 @@ public class BackgroundRunner {
 
                         HashMap totemParams = new HashMap();
                         Integer i = Integer.parseInt(receivedDataPomodoro);
+                        System.out.println(i);
                         String state = "Standby";
 
                         switch (i) {
                             case 0:
                                 state = "Email";
+                                break;
                             case 1:
                                 state = "Meeting";
+                                break;
                             case 2:
-                                state = "Coding";
+                                state = "Working";
+                                break;
                             case 3:
                                 state = "Break";
+                                break;
                             case 4:
                                 state = "Research";
                         }
 
                         totemParams.put("state", state);
+                        totemParams.put("id", Integer.toString(perss.getId()));
+
+                        String result = HttpRequester.generalRequester(UrlList.APIUrl, "/totemdatum", totemParams, "", "POST");
+                        System.out.println(totemParams);
+                        System.out.println(result);
 //                    totemParams.put("id",001);
 //                    totemParams.put("person_id",001);
 
 //                    String params = parameterfier(totemParams);
 //                    HttpRequester totemReq = new HttpRequester();
 //                    totemReq.generalRequester("iotfocus.herokuapp.com/person/",params,"data","PUT");
-                        String result = HttpRequester.generalRequester(UrlList.APIUrl, "/totemdatum", totemParams, "", "POST");
 
-                        System.out.println(result);
+
+
+
+
+
+
+                       // String result = HttpRequester.generalRequester(UrlList.APIUrl, "/totemdatum", totemParams, "", "POST");
+
+                        //System.out.println(result);
 
                     } catch (SerialPortException ex) {
                         System.out.println("Error in receiving response from totem port: " + ex);
@@ -249,10 +289,13 @@ public class BackgroundRunner {
                     }
 
                     seatParams.put("is_sitting",is_sitting);
+                    seatParams.put("person_id", Integer.toString(perss.getId()));
+
 //                    seatParams.put("id",001);
 //                    seatParams.put("person_id",001);
 
 //                    HttpRequester totemReq = new HttpRequester();
+
                     String result = HttpRequester.generalRequester(UrlList.APIUrl, "/seatdatum", seatParams, "", "POST");
 
                     System.out.println(result);
