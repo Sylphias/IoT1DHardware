@@ -20,7 +20,7 @@ public class Multithreader implements Runnable {
         System.out.println("Running "+threadName);
         try {
             if(threadName.contains("Emotion")){
-                BackgroundRunner.getEmotionData(BackgroundRunner.pers);
+                BackgroundRunner.getEmotionData(UrlList.APIUrl);
             } else if(threadName.contains(("Seat"))){
                 BackgroundRunner.getSeatData();
             } else if(threadName.contains("Totem")){
