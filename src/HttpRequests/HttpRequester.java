@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,17 +41,13 @@ import org.apache.http.util.EntityUtils;
 public class HttpRequester {
     public static EmotionData emotionRequester(String urlParameters, String requestType, int person_id) {
         HttpURLConnection connection = null;
-//        String targetURL = UrlList.MSEmotionAPIUrl;
 
-        try {
-
+        try{
             URL url = new URL(UrlList.MSEmotionAPIUrl);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("Method", requestType);
             connection.setRequestProperty("User-Agent", "Mozilla/4.76");
-//            connection.setRequestProperty("Content-Length", Integer.toString(urlParameters.getBytes().length));
-//            connection.setRequestProperty("Content-Language", "en-US");
             connection.setUseCaches(false);
             connection.setDoOutput(true);
             connection.setRequestProperty("Ocp-Apim-Subscription-Key", APIKeys.MSAPIKey);
