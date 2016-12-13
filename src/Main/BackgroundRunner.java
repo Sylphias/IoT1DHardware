@@ -20,6 +20,7 @@ import org.bytedeco.javacv.OpenCVFrameGrabber;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,8 +33,22 @@ import static org.bytedeco.javacpp.opencv_imgcodecs.cvSaveImage;
  */
 public class BackgroundRunner {
     public static void main(String[] args) {
+
+//        Scanner reader = new Scanner(System.in);  // Reading from System.in
+//        System.out.println("Please enter the COM port of your seat sensor:");
+//        seatCOM = reader.nextLine();
+
+        seatCOM = args[0];
+        totemCOM = args[1];
+
+//        System.out.println("Please enter the COM port of your totem:");
+//        totemCOM = reader.nextLine(); // Scans the next token of the input as an int.
+
         startServer();
     }
+
+    public static String seatCOM;
+    public static String totemCOM;
 
     public static void startServer(){
 
@@ -140,7 +155,7 @@ public class BackgroundRunner {
     }
 
     public static void getTotemData(){
-        String pomodoroPort = "COM8";
+        String pomodoroPort = totemCOM;
 
         serialPort0 = new SerialPort(pomodoroPort);
 
@@ -171,7 +186,7 @@ public class BackgroundRunner {
     }
 
     public static void getSeatData(){
-        String seatsensorPort = "COM11";
+        String seatsensorPort = seatCOM;
 
         serialPort1 = new SerialPort(seatsensorPort);
 
