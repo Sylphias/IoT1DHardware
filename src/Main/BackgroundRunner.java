@@ -38,8 +38,14 @@ public class BackgroundRunner {
 //        System.out.println("Please enter the COM port of your seat sensor:");
 //        seatCOM = reader.nextLine();
 
-        seatCOM = args[0];
-        totemCOM = args[1];
+        if(args.length != 0){
+            seatCOM = args[0];
+            totemCOM = args[1];
+        }
+        else{
+            seatCOM = "COM11";
+            totemCOM = "COM8";
+        }
 
 //        System.out.println("Please enter the COM port of your totem:");
 //        totemCOM = reader.nextLine(); // Scans the next token of the input as an int.
@@ -53,10 +59,10 @@ public class BackgroundRunner {
     public static void startServer(){
 
         perss = initPerson();
-        //Multithreader emotion = new Multithreader("Emotion Sensor");
+        Multithreader emotion = new Multithreader("Emotion Sensor");
         Multithreader seat = new Multithreader("Seat Sensor");
         Multithreader totem = new Multithreader("Totem");
-        //emotion.start();
+        emotion.start();
         seat.start();
         totem.start();
         //getEmotionData(UrlList.testUrl);
